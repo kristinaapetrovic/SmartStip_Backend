@@ -10,4 +10,5 @@ class ScholarshipCall extends Model
     /** @use HasFactory<\Database\Factories\ScholarshipCallFactory> */
     use HasFactory;
     public static $statuses = ['open', 'closed'];
+    protected $guarded = ['scholarship_call_id'];
 }
