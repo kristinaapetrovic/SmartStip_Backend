@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Application;
+use App\Models\ScholarshipCall;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,7 +21,7 @@ return new class extends Migration
             $table->string('identification_card_url');
             $table->string('proof_of_unenrollment_url');
             $table->foreignIdFor('student')->constrained()->onDelete('cascade');
-            $table->foreignIdFor('scholarship')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(ScholarshipCall::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
