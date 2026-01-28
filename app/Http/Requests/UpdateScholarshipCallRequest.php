@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\ScholarshipCall;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class StoreScholarshipCallRequest extends FormRequest
+class UpdateScholarshipCallRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: ScholarshipCall::class);
+        $scholarshipCall = $this->route('scholarship_call');
+        return $this->user()->can('update', $scholarshipCall);
     }
 
     /**
@@ -21,14 +21,14 @@ class StoreScholarshipCallRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+     public function rules(): array
     {
+
         return [
             'title' => [
                 'required',
                 'string',
-                'max:255',
-                'unique:scholarship_calls,title', // jedinstven naslov konkursa
+                'max:255'
             ],
             'description' => [
                 'required',
@@ -41,12 +41,12 @@ class StoreScholarshipCallRequest extends FormRequest
             'application_deadline' => [
                 'required',
                 'date',
-                'after_or_equal:today', 
+                'after_or_equal:today',
             ],
             'complaint_deadline' => [
                 'nullable',
                 'date',
-                'after:application_deadline', 
+                'after:application_deadline',
             ],
         ];
     }

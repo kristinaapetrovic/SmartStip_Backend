@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Faculty;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Gate;    
 
-class StoreFacultyRequest extends FormRequest
+class UpdateFacultyRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: Faculty::class);
+        $faculty = $this->route('faculty');
+        return Gate::allows('update', $faculty);
     }
 
     /**
@@ -23,12 +23,12 @@ class StoreFacultyRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'name' => [
                 'required',
                 'string',
-                'max:255',
-                'unique:faculties,name', 
+                'max:255'
             ],
             'street_address' => [
                 'required',

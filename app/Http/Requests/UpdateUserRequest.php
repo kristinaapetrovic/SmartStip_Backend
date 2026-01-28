@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class StoreUserRequest extends FormRequest
+class UpdateUserRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: User::class);
+        $user = $this->route('user');
+        return $this->user()->can('update', $user);
     }
 
     /**
@@ -23,24 +23,13 @@ class StoreUserRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-            ],
+            'name' => ['required','string','max:255'],
             'email' => [
-                'required',
-                'email',
-                'max:255',
-                'unique:users,email',
+                'required','email','max:255'
             ],
-            'password' => [
-                'required',
-                'string',
-                'min:8', 
-                'confirmed', 
-            ],
+            'password' => ['nullable','string','min:8','confirmed'], 
         ];
     }
 
@@ -48,16 +37,9 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'name.required' => 'Name is required.',
-            'name.string' => 'Name must be a string.',
-            'name.max' => 'Name is too long.',
-
             'email.required' => 'Email is required.',
-            'email.email' => 'Email must be a valid email address.',
-            'email.max' => 'Email is too long.',
+            'email.email' => 'Email must be valid.',
             'email.unique' => 'This email is already taken.',
-
-            'password.required' => 'Password is required.',
-            'password.string' => 'Password must be a string.',
             'password.min' => 'Password must be at least 8 characters.',
             'password.confirmed' => 'Password confirmation does not match.',
         ];

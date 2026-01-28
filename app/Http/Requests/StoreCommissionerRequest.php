@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use App\Models\Commissioner;
 
 class StoreCommissionerRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreCommissionerRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Gate::allows('create', arguments: Commissioner::class);
     }
 
     /**

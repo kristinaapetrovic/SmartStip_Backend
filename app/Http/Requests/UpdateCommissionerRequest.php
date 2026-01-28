@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Location;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;  
+use Illuminate\Support\Facades\Gate;
 
-class StoreLocationRequest extends FormRequest
+class UpdateCommissionerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: Location::class);
+        $commissioner = $this->route('commissioner');
+        return Gate::allows('update', $commissioner);
     }
 
     /**
@@ -23,23 +23,21 @@ class StoreLocationRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
-            'name' => [
+            'user_id' => [
                 'required',
-                'string',
-                'max:255',
-                'unique:locations,name', 
-            ],
+                'exists:users,id'
+],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.required' => 'Location name is required.',
-            'name.string' => 'Location name must be a string.',
-            'name.max' => 'Location name is too long.',
-            'name.unique' => 'A location with this name already exists.',
+            'user_id.required' => 'User is required.',
+            'user_id.exists' => 'Selected user does not exist.',
+            'user_id.unique' => 'This user is already a commissioner.',
         ];
     }
 }

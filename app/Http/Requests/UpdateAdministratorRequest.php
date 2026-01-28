@@ -4,16 +4,16 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use App\Models\Administrator;
 
-class StoreAdministratorRequest extends FormRequest
+class UpdateAdministratorRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: Administrator::class);
+        $administrator = $this->route('administrator');
+        return Gate::allows('update', $administrator);
     }
 
     /**
@@ -23,11 +23,11 @@ class StoreAdministratorRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'user_id' => [
                 'required',
-                'exists:users,id',
-                'unique:administrators,user_id', 
+                'exists:users,id'
             ],
             'faculty_id' => [
                 'required',
@@ -35,9 +35,7 @@ class StoreAdministratorRequest extends FormRequest
             ],
         ];
     }
-    /**
-     * Get custom error messages for validation rules.
-     */
+
     public function messages(): array
     {
         return [

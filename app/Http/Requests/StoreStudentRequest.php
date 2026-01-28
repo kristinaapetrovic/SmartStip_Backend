@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Student;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreStudentRequest extends FormRequest
 {
@@ -11,7 +13,7 @@ class StoreStudentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return Gate::allows('create', arguments: Student::class);
     }
 
     /**

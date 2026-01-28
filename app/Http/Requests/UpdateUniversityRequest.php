@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\University;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class StoreUniversityRequest extends FormRequest
+class UpdateUniversityRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: University::class);
+        $university = $this->route('university');
+        return $this->user()->can('update', $university);
     }
 
     /**
@@ -23,17 +23,12 @@ class StoreUniversityRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'name' => [
-                'required',
-                'string',
-                'max:255',
-                'unique:universities,name', 
+                'required','string','max:255',
             ],
-            'location_id' => [
-                'required',
-                'exists:locations,id',
-            ],
+            'location_id' => ['required','exists:locations,id'],
         ];
     }
 
@@ -41,10 +36,7 @@ class StoreUniversityRequest extends FormRequest
     {
         return [
             'name.required' => 'University name is required.',
-            'name.string' => 'University name must be a string.',
-            'name.max' => 'University name is too long.',
             'name.unique' => 'A university with this name already exists.',
-
             'location_id.required' => 'Location is required.',
             'location_id.exists' => 'Selected location does not exist.',
         ];

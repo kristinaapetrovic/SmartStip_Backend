@@ -2,18 +2,18 @@
 
 namespace App\Http\Requests;
 
-use App\Models\Location;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;  
+use Illuminate\Support\Facades\Gate;
 
-class StoreLocationRequest extends FormRequest
+class UpdateLocationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return Gate::allows('create', arguments: Location::class);
+        $location = $this->route('location');
+        return Gate::allows('update', $location);
     }
 
     /**
@@ -21,14 +21,14 @@ class StoreLocationRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+     public function rules(): array
     {
+
         return [
             'name' => [
                 'required',
                 'string',
-                'max:255',
-                'unique:locations,name', 
+                'max:255'
             ],
         ];
     }
