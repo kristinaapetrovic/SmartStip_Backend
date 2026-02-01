@@ -17,10 +17,14 @@ class UniversityController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('viewAny', University::class))
-            return UniversityResource::collection(University::all());
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('viewAny', University::class))
+                return UniversityResource::collection(University::all());
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -28,12 +32,16 @@ class UniversityController extends Controller
      */
     public function store(StoreUniversityRequest $request)
     {
-        $data = $request->validated();
-        $university = University::create($data);
-        return response()->json([
-            'message' => 'Univerzitet uspešno kreiran',
-            'model' => new UniversityResource($university)
-        ], 201);
+        try{
+            $data = $request->validated();
+            $university = University::create($data);
+            return response()->json([
+                'message' => 'Univerzitet uspešno kreiran',
+                'model' => new UniversityResource($university)
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -41,10 +49,14 @@ class UniversityController extends Controller
      */
     public function show(University $university)
     {
-        if(Gate::allows('view', $university))
-            return new UniversityResource($university);
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $university))
+                return new UniversityResource($university);
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -52,12 +64,16 @@ class UniversityController extends Controller
      */
     public function update(UpdateUniversityRequest $request, University $university)
     {
-        $data = $request->validated();
-        $university->update($data);
-        return response()->json([
-            'message' => 'Univerzitet uspešno ažuriran',
-            'model' => new UniversityResource($university)
-        ]);
+        try{
+            $data = $request->validated();
+            $university->update($data);
+            return response()->json([
+                'message' => 'Univerzitet uspešno ažuriran',
+                'model' => new UniversityResource($university)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -65,14 +81,18 @@ class UniversityController extends Controller
      */
     public function destroy(University $university)
     {
-        if(Gate::allows('delete', $university))
-        {
-            $university->delete();
-            return response()->json(['message'=>'Univerzitet uspešno obrisan']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('delete', $university))
+            {
+                $university->delete();
+                return response()->json(['message'=>'Univerzitet uspešno obrisan']);
+            }
+            else
+            {
+                return response()->json(['message'=>'Forbidden'], 403);
+            }
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 }

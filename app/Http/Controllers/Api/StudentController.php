@@ -18,10 +18,14 @@ class StudentController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('viewAny', Student::class))
-            return StudentResource::collection(Student::all());
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('viewAny', Student::class))
+                return StudentResource::collection(Student::all());
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -29,12 +33,16 @@ class StudentController extends Controller
      */
     public function store(StoreStudentRequest $request)
     {
-        $data = $request->validated();
-        $student = Student::create($data);
-        return response()->json([
-            'message' => 'Student successfully created',
-            'model' => new StudentResource($student)
-        ], 201);
+        try{
+            $data = $request->validated();
+            $student = Student::create($data);
+            return response()->json([
+                'message' => 'Student successfully created',
+                'model' => new StudentResource($student)
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -53,12 +61,16 @@ class StudentController extends Controller
      */
     public function update(UpdateStudentRequest $request, Student $student)
     {
-        $data = $request->validated();
-        $student->update($data);
-        return response()->json([
-            'message' => 'Student successfully updated',
-            'model' => new StudentResource($student)
-        ]);
+        try{
+            $data = $request->validated();
+            $student->update($data);
+            return response()->json([
+                'message' => 'Student successfully updated',
+                'model' => new StudentResource($student)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -66,14 +78,18 @@ class StudentController extends Controller
      */
     public function destroy(Student $student)
     {
-        if(Gate::allows('delete', $student))
-        {
-            $student->delete();
-            return response()->json(['message'=>'Student successfully deleted']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('delete', $student))
+            {
+                $student->delete();
+                return response()->json(['message'=>'Student successfully deleted']);
+            }
+            else
+            {
+                return response()->json(['message'=>'Forbidden'], 403);
+            }
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);  
         }
     }
 }

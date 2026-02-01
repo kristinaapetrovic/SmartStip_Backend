@@ -15,10 +15,14 @@ class UserController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('viewAny', User::class))
-            return UserResource::collection(User::all());
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('viewAny', User::class))
+                return UserResource::collection(User::all());
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -34,10 +38,14 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        if(Gate::allows('view', $user))
-            return new UserResource($user);
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $user))
+                return new UserResource($user);
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -45,12 +53,16 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, User $user)
     {
-        $data = $request->validated();
-        $user->update($data);
-        return response()->json([
-            'message' => 'Korisnik uspešno ažuriran',
-            'model' => new UserResource($user)
-        ]);
+        try{
+            $data = $request->validated();
+            $user->update($data);
+            return response()->json([
+                'message' => 'Korisnik uspešno ažuriran',
+                'model' => new UserResource($user)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -58,14 +70,18 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if(Gate::allows('delete', $user))
-        {
-            $user->delete();
-            return response()->json(['message'=>'Korisnik uspešno obrisan']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('delete', $user))
+            {
+                $user->delete();
+                return response()->json(['message'=>'Korisnik uspešno obrisan']);
+            }
+            else
+            {
+                return response()->json(['message'=>'Forbidden'], 403);
+            }
+        }   catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 }

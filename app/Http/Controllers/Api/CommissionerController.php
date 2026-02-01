@@ -16,10 +16,14 @@ class CommissionerController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('viewAny', Commissioner::class)){
-            return CommissionerResource::collection(Commissioner::all());
+        try{
+            if(Gate::allows('viewAny', Commissioner::class)){
+                return CommissionerResource::collection(Commissioner::all());
+            }
+            return response()->json(['message' => 'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
-        return response()->json(['message' => 'Forbidden'], 403);
     }
 
     /**
@@ -27,14 +31,18 @@ class CommissionerController extends Controller
      */
     public function store(StoreCommissionerRequest $request)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $commissioner = Commissioner::create($data);
+            $commissioner = Commissioner::create($data);
 
-        return response()->json([
-            'message' => 'Komisija uspešno kreirana',
-            'model' => new CommissionerResource($commissioner)
-        ], 201);
+            return response()->json([
+                'message' => 'Komisija uspešno kreirana',
+                'model' => new CommissionerResource($commissioner)
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -42,10 +50,14 @@ class CommissionerController extends Controller
      */
     public function show(Commissioner $commissioner)
     {
-        if(Gate::allows('view', $commissioner))
-            return new CommissionerResource($commissioner);
-        else
-            return response()->json(['message' => 'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $commissioner))
+                return new CommissionerResource($commissioner);
+            else
+                return response()->json(['message' => 'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -53,14 +65,18 @@ class CommissionerController extends Controller
      */
     public function update(UpdateCommissionerRequest $request, Commissioner $commissioner)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $commissioner->update($data);
+            $commissioner->update($data);
 
-        return response()->json([
-            'message' => 'Komisija uspešno ažurirana',
-            'model' => new CommissionerResource($commissioner)
-        ]);
+            return response()->json([
+                'message' => 'Komisija uspešno ažurirana',
+                'model' => new CommissionerResource($commissioner)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -68,12 +84,16 @@ class CommissionerController extends Controller
      */
     public function destroy(Commissioner $commissioner)
     {
-        if(Gate::allows('delete', $commissioner)){
-            $commissioner->delete();
-            return response()->json([
-                'message' => 'Komisija uspešno obrisana.',
-            ]); 
-        }else
-            return response()->json(['message' => 'Forbidden'], 403);
+        try{
+            if(Gate::allows('delete', $commissioner)){
+                $commissioner->delete();
+                return response()->json([
+                    'message' => 'Komisija uspešno obrisana.',
+                ]); 
+            }else
+                return response()->json(['message' => 'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 }

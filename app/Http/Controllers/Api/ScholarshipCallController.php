@@ -17,10 +17,14 @@ class ScholarshipCallController extends Controller
      */
     public function index()
     {
-        if(\Gate::allows('viewAny', ScholarshipCall::class))
+        try{
+        if(Gate::allows('viewAny', ScholarshipCall::class))
             return ScholarshipCallResource::collection(ScholarshipCall::all());
         else
             return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -28,14 +32,18 @@ class ScholarshipCallController extends Controller
      */
     public function store(StoreScholarshipCallRequest $request)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $scholarshipCall = ScholarshipCall::create($data);
+            $scholarshipCall = ScholarshipCall::create($data);
 
-        return response()->json([
-            'message' => 'Konkurs za stipendiju uspešno kreiran',
-            'model' => new ScholarshipCallResource($scholarshipCall)
-        ], 201);
+            return response()->json([
+                'message' => 'Konkurs za stipendiju uspešno kreiran',
+                'model' => new ScholarshipCallResource($scholarshipCall)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -43,10 +51,14 @@ class ScholarshipCallController extends Controller
      */
     public function show(ScholarshipCall $scholarshipCall)
     {
-        if(Gate::allows('view', $scholarshipCall))
-            return new ScholarshipCallResource($scholarshipCall);
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $scholarshipCall))
+                return new ScholarshipCallResource($scholarshipCall);
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -54,12 +66,16 @@ class ScholarshipCallController extends Controller
      */
     public function update(UpdateScholarshipCallRequest $request, ScholarshipCall $scholarshipCall)
     {
-        $data = $request->validated();
-        $scholarshipCall->update($data);
-        return response()->json([
-            'message' => 'Konkurs za stipendiju uspešno ažuriran',
-            'model' => new ScholarshipCallResource($scholarshipCall)
-        ]);
+        try{
+            $data = $request->validated();
+            $scholarshipCall->update($data);
+            return response()->json([
+                'message' => 'Konkurs za stipendiju uspešno ažuriran',
+                'model' => new ScholarshipCallResource($scholarshipCall)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -67,14 +83,18 @@ class ScholarshipCallController extends Controller
      */
     public function destroy(ScholarshipCall $scholarshipCall)
     {
-        if(Gate::allows('delete', $scholarshipCall))
-        {
-            $scholarshipCall->delete();
-            return response()->json(['message'=>'Konkurs za stipendiju uspešno obrisan']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('delete', $scholarshipCall))
+            {
+                $scholarshipCall->delete();
+                return response()->json(['message'=>'Konkurs za stipendiju uspešno obrisan']);
+            }
+            else
+            {
+                return response()->json(['message'=>'Forbidden'], 403);
+            }
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
 }

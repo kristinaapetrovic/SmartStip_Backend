@@ -17,10 +17,14 @@ class LocationController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('viewAny', Location::class))
-            return Location::all();
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('viewAny', Location::class))
+                return Location::all();
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -28,12 +32,16 @@ class LocationController extends Controller
      */
     public function store(StoreLocationRequest $request)
     {
-        $data=$request->validated();
-        $location=Location::create($data);
-        return response()->json([
-            'message'=>'Lokacija uspešno kreirana',
-            'model'=>$location
-        ],201);
+        try{
+            $data = $request->validated();
+            $location = Location::create($data);
+            return response()->json([
+                'message' => 'Lokacija uspešno kreirana',
+                'model' => $location
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -41,38 +49,49 @@ class LocationController extends Controller
      */
     public function show(Location $location)
     {
-        if(Gate::allows('view', $location))
-            return new LocationResource($location);
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $location))
+                return new LocationResource($location);
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
-
+   
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateLocationRequest $request, Location $location)
     {
-        $data=$request->validated();
-        $location->update($data);
-        return response()->json([
-            'message'=>'Lokacija uspešno ažurirana',
-            'model'=>$location
-        ]);
+        try{
+            $data = $request->validated();
+            $location->update($data);
+            return response()->json([
+                'message' => 'Lokacija uspešno ažurirana',
+                'model' => $location
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
-
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(Location $location)
     {
-        if(Gate::allows('delete', $location))
-        {
-            $location->delete();
-            return response()->json(['message'=>'Lokacija uspešno obrisana']);
-        }
-        else
-        {
-            return response()->json(['message'=>'Forbidden'], 403);
-        }
+        try{
+            if(Gate::allows('delete', $location))
+            {
+                $location->delete();
+                return response()->json(['message'=>'Lokacija uspešno obrisana']);
+            }
+            else
+            {
+                return response()->json(['message'=>'Forbidden'], 403);
+            }
+        }catch(\Exception $e){
+                return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }   
     }
 }

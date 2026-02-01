@@ -17,10 +17,14 @@ class FacultyController extends Controller
      */
     public function index()
     {
-        if(Gate::allows('viewAny', Faculty::class))
-            return FacultyResource::collection(Faculty::all());
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('viewAny', Faculty::class))
+                return FacultyResource::collection(Faculty::all());
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -28,14 +32,18 @@ class FacultyController extends Controller
      */
     public function store(StoreFacultyRequest $request)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $faculty = Faculty::create($data);
+            $faculty = Faculty::create($data);
 
-        return response()->json([
-            'message' => 'Fakultet uspešno kreiran',
-            'model' => new FacultyResource($faculty)
-        ], 201);
+            return response()->json([
+                'message' => 'Fakultet uspešno kreiran',
+                'model' => new FacultyResource($faculty)
+            ], 201);
+        } catch (\Exception $e) {
+                return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -43,10 +51,14 @@ class FacultyController extends Controller
      */
     public function show(Faculty $faculty)
     {
-        if(Gate::allows('view', $faculty))
-            return new FacultyResource($faculty);
-        else
-            return response()->json(['message'=>'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $faculty))
+                return new FacultyResource($faculty);
+            else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -54,12 +66,16 @@ class FacultyController extends Controller
      */
     public function update(UpdateFacultyRequest $request, Faculty $faculty)
     {
-        $data=$request->validated();
-        $faculty->update($data);
-        return response()->json([
-            'message' => 'Fakultet uspešno ažuriran',
-            'model' => new FacultyResource($faculty)
-        ]);
+        try{
+            $data = $request->validated();
+            $faculty->update($data);
+            return response()->json([
+                'message' => 'Fakultet uspešno ažuriran',
+                'model' => new FacultyResource($faculty)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -67,10 +83,14 @@ class FacultyController extends Controller
      */
     public function destroy(Faculty $faculty)
     {
-        if(Gate::allows('delete', $faculty)){
-            $faculty->delete();
-            return response()->json(['message'=>'Fakultet uspešno obrisan.']);
-        }else
-            return response()->json(['message'=>'Forbiden'], 403);
+        try{
+            if(Gate::allows('delete', $faculty)){
+                $faculty->delete();
+                return response()->json(['message'=>'Fakultet uspešno obrisan.']);
+            }else
+                return response()->json(['message'=>'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 }

@@ -18,10 +18,14 @@ class ApplicationController extends Controller
      */
     public function index()
     {
+        try{
         if(Gate::allows('viewAny', Application::class))
             return ApplicationResource::collection(Application::all());
         else
             return response()->json(['message' => 'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -29,14 +33,18 @@ class ApplicationController extends Controller
      */
     public function store(StoreApplicationRequest $request)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $application = Application::create($data);
+            $application = Application::create($data);
 
-        return response()->json([
-            'message' => 'Prijava uspešno kreirana',
-            'model' => new ApplicationResource($application)
-        ], 201);
+            return response()->json([
+                'message' => 'Prijava uspešno kreirana',
+                'model' => new ApplicationResource($application)
+            ], 201);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -44,10 +52,14 @@ class ApplicationController extends Controller
      */
     public function show(Application $application)
     {
-        if(Gate::allows('view', $application))
-            return new ApplicationResource($application);
-        else
-            return response()->json(['message' => 'Forbidden'], 403);
+        try{
+            if(Gate::allows('view', $application))
+                return new ApplicationResource($application);
+            else
+                return response()->json(['message' => 'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -55,14 +67,18 @@ class ApplicationController extends Controller
      */
     public function update(UpdateApplicationRequest $request, Application $application)
     {
-        $data = $request->validated();
+        try{
+            $data = $request->validated();
 
-        $application->update($data);
+            $application->update($data);
 
-        return response()->json([
-            'message' => 'Prijava uspešno ažurirana',
-            'model' => new ApplicationResource($application)
-        ]);
+            return response()->json([
+                'message' => 'Prijava uspešno ažurirana',
+                'model' => new ApplicationResource($application)
+            ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
+        }
     }
 
     /**
@@ -70,13 +86,16 @@ class ApplicationController extends Controller
      */
     public function destroy(Application $application)
     {
-        if(Gate::allows('delete', $application)){
-            $application->delete();
-            return response()->json([
-                'message' => 'Prijava uspešno obrisana.',
-            ]);
+        try{
+            if(Gate::allows('delete', $application)){
+                $application->delete();
+                return response()->json([
+                    'message' => 'Prijava uspešno obrisana.',
+                ]);
+            }
+            else
+                return response()->json(['message' => 'Forbidden'], 403);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
-        else
-            return response()->json(['message' => 'Forbidden'], 403);
-    }
-}
+    }}
