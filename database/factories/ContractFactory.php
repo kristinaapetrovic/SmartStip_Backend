@@ -3,21 +3,29 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Contract;
+use App\Models\Student;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Contract>
- */
 class ContractFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
+    protected $model = Contract::class;
+
     public function definition(): array
     {
+        $contractDate = $this->faker->dateTimeBetween('-1 year', 'now');
+
         return [
-            //
+            'type' => $this->faker->randomElement(Contract::$types),
+
+            'contract_date' => $contractDate,
+
+            'signed' => $this->faker->boolean(80), // 80% signed
+
+            'terminated' => $this->faker->boolean(10), // 10% terminated
+
+            'details' => $this->faker->optional()->paragraph(),
+
+            'student_id' => Student::factory(),
         ];
     }
 }

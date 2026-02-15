@@ -4,6 +4,7 @@ use App\Models\Contract;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Student;
 
 return new class extends Migration
 {
@@ -19,7 +20,7 @@ return new class extends Migration
             $table->boolean('signed');
             $table->boolean('terminated');
             $table->text('details')->nullable();
-            $table->foreignIdFor('student')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Student::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

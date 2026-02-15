@@ -4,6 +4,9 @@ use App\Models\Student;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\User;
+use App\Models\Location;
+use App\Models\Faculty;
 
 return new class extends Migration
 {
@@ -21,9 +24,9 @@ return new class extends Migration
             $table->string('index_number')->unique();
             $table->string('street_address');
             $table->string('phone_number');
-            $table->foreignIdFor('user')->constrained()->onDelete('cascade');
-            $table->foreignIdFor('location')->constrained()->onDelete('cascade');
-            $table->foreignIdFor('faculty')->constrained()->onDelete('cascade');
+            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Location::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Faculty::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

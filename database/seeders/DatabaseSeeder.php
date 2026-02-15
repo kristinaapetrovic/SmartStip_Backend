@@ -2,24 +2,46 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\University;
+use App\Models\Faculty;
+use App\Models\Student;
+use App\Models\Administrator;
+use App\Models\Commissioner;
+use App\Models\ScholarshipCall;
+use App\Models\Application;
+use App\Models\Contract;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        University::factory()
+            ->count(2)
+            ->has(
+                Faculty::factory()
+                    ->count(3)
+                    ->has(
+                        Administrator::factory()->count(2)
+                    )
+                    ->has(
+                        Student::factory()
+                            ->count(20)
+                            ->has(Contract::factory())
+                    )
+            )
+            ->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        Commissioner::factory()->count(5)->create();
+
+        // 3️⃣ Konkurs
+        $call = ScholarshipCall::factory()->create();
+
+        Student::all()->each(function ($student) use ($call) {
+            Application::factory()->create([
+                'student_id' => $student->id,
+                'scholarship_call_id' => $call->id,
+            ]);
+        });
     }
 }

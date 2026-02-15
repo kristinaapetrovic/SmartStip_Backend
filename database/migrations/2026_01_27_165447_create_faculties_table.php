@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\Location;
+use App\Models\University;
 
 return new class extends Migration
 {
@@ -15,8 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('street_address');
-            $table->foreignIdFor("location")->constrained()->onDelete('cascade');
-            $table->foreignIdFor("university")->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Location::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(University::class)->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
