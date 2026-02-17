@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateApplicationRequest;
 use App\Http\Resources\ApplicationResource;
 use App\Models\Application;
 use Gate;
+use App\Trait\CanLoadRelationships;
 use Illuminate\Http\Request;
 
 class ApplicationController extends Controller
@@ -16,6 +17,8 @@ class ApplicationController extends Controller
     /**
      * Display a listing of the resource.
      */
+    use CanLoadRelationships;
+    private array $relations = ['student', 'student.user', 'scholarship'];
     public function index()
     {
         try{

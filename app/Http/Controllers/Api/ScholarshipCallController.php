@@ -9,12 +9,15 @@ use App\Models\ScholarshipCall;
 use Illuminate\Http\Request;
 use App\Http\Resources\ScholarshipCallResource;
 use Illuminate\Support\Facades\Gate;
+use App\Trait\CanLoadRelationships;
 
 class ScholarshipCallController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    use CanLoadRelationships;
+    private array $relations = ['applications', 'applications.student', 'applications.student.user'];
     public function index()
     {
         try{

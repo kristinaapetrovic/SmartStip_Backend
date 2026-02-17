@@ -9,11 +9,16 @@ use App\Models\Commissioner;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\CommissionerResource;
+use App\Trait\CanLoadRelationships;
 class CommissionerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+   
+    use CanLoadRelationships;
+    private array $relations = ['user'];
+
     public function index()
     {
         try{

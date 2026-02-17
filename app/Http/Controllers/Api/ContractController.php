@@ -9,12 +9,15 @@ use App\Http\Resources\ContractResource;
 use App\Models\Contract;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use App\Trait\CanLoadRelationships;
 
 class ContractController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+     use CanLoadRelationships;
+    private array $relations = ['student', 'student.user'];
     public function index()
     {
         try{

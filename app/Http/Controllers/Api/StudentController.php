@@ -10,12 +10,15 @@ use Illuminate\Session\Store;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\StudentResource;
 use App\Http\Requests\StoreStudentRequest;
-
+use App\Trait\CanLoadRelationships;
 class StudentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    use CanLoadRelationships;
+    private array $relations = ['user', 'faculty', 'location', 'contract', 'applications'];
+
     public function index()
     {
         try{

@@ -9,12 +9,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\UniversityResource;
 use App\Http\Requests\StoreUniversityRequest;
+use App\Trait\CanLoadRelationships;
 
 class UniversityController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    use CanLoadRelationships;
+    private array $relations = ['location', 'faculties'];
     public function index()
     {
         try{

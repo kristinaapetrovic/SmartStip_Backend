@@ -9,12 +9,15 @@ use App\Models\Faculty;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Resources\FacultyResource;
+use App\Trait\CanLoadRelationships;
 
 class FacultyController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    use CanLoadRelationships;
+    private array $relations = ['university', 'location', 'students', 'administrators', 'students.user', 'administrators.user'];
     public function index()
     {
         try{
