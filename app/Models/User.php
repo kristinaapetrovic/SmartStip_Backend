@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -61,5 +62,19 @@ class User extends Authenticatable
     {
         return $this->hasOne(Administrator::class);
     }   
+
+    public function isAdministrator(): bool
+    {
+        return $this->administrator()->exists();
+    }
     
+    public function isStudent(): bool
+    {
+        return $this->student()->exists();
+    }
+
+    public function isCommissioner(): bool
+    {
+        return $this->commissioner()->exists();
+    }
 }
