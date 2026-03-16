@@ -23,6 +23,7 @@ class StudentResource extends JsonResource
             'index_number' => $this->index_number,
             'street_address' => $this->street_address,
             'phone_number' => $this->phone_number,
+            'applications' => ApplicationResource::collection($this->whenLoaded('applications')),
             'user' => new UserResource($this->whenLoaded('user')),
             'location' => new LocationResource($this->whenLoaded('location')),
             'faculty' => new FacultyResource($this->whenLoaded('faculty')),

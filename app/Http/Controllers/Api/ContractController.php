@@ -16,13 +16,24 @@ class ContractController extends Controller
     /**
      * Display a listing of the resource.
      */
-     use CanLoadRelationships;
-    private array $relations = ['student', 'student.user'];
-    public function index()
+    use CanLoadRelationships;
+    private array $relations = ['student', 'student.user', 'scholarship'];
+    public function index(Request $request)
     {
         try{
-            if(Gate::allows('viewAny', Contract::class))
-                return ContractResource::collection(Contract::all());
+            if(Gate::allows('viewAny', Contract::class)){
+                $index = $request->input('index');
+
+                $contractsQuery = Contract::query()
+                    ->when($index, fn($query, $index) => $query->withStudentIndex($index));
+
+                $contractsQuery = $this->loadRelationships($contractsQuery);
+
+                $contracts = $contractsQuery->latest()->get();
+
+                return ContractResource::collection($contracts);
+
+            }
             else
                 return response()->json(['message'=>'Forbidden'], 403);
         } catch (\Exception $e) {
@@ -56,7 +67,7 @@ class ContractController extends Controller
     {
         try{
             if(Gate::allows('view', $contract))
-                return new ContractResource($contract);
+                return new ContractResource($this->loadRelationships($contract));
             else
                 return response()->json(['message'=>'Forbidden'], 403);
         }catch(\Exception $e){

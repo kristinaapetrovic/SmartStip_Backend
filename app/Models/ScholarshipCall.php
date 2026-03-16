@@ -11,10 +11,10 @@ class ScholarshipCall extends Model
     /** @use HasFactory<\Database\Factories\ScholarshipCallFactory> */
     use HasFactory;
     public static $statuses = ['open', 'closed'];
-    protected $guarded = ['scholarship_call_id'];
+    protected $guarded = ['id'];
 
     public function applications(): HasMany
     {
-        return $this->hasMany(Application::class);
+        return $this->hasMany(Application::class, 'scholarship_call_id', 'id');
     }
 }

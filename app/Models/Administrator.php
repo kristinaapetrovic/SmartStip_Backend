@@ -23,5 +23,11 @@ class Administrator extends Model
         return $this->belongsTo(Faculty::class);
     }
 
+    public function scopeWithUserSearch($query, $search)
+    {
+        $query->whereHas('user', function ($q) use ($search) {
+            $q->where('name', 'like', "%$search%");
+        });
+    }
     
 }

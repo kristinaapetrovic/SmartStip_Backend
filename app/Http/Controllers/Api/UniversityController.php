@@ -18,13 +18,24 @@ class UniversityController extends Controller
      */
     use CanLoadRelationships;
     private array $relations = ['location', 'faculties'];
-    public function index()
+    public function index(Request $request)
     {
         try{
-            if(Gate::allows('viewAny', University::class))
-                return UniversityResource::collection(University::all());
-            else
-                return response()->json(['message'=>'Forbidden'], 403);
+            
+            $name = $request->input('name');
+            $locationId = $request->input('location_id');
+
+            $universitiesQuery = University::query()
+                ->when($name, fn($query) => $query->withName($name))
+                ->when($locationId, fn($query) => $query->withLocation($locationId));
+
+            $universitiesQuery = $this->loadRelationships($universitiesQuery);
+
+            $universities = $universitiesQuery->latest()->get();
+
+            return UniversityResource::collection($universities);
+
+            
         }catch(\Exception $e){
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
@@ -53,10 +64,7 @@ class UniversityController extends Controller
     public function show(University $university)
     {
         try{
-            if(Gate::allows('view', $university))
-                return new UniversityResource($university);
-            else
-                return response()->json(['message'=>'Forbidden'], 403);
+            return new UniversityResource($this->loadRelationships($university));
         }catch(\Exception $e){
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }

@@ -13,7 +13,7 @@ class AdministratorPolicy
      */
     public function viewAny(User $user): bool
     {
-        return false;
+        return $user->isCommissioner();
     }
 
     /**
@@ -29,7 +29,7 @@ class AdministratorPolicy
      */
     public function create(User $user): bool
     {
-        return false;
+        return $user->isCommissioner();
     }
 
     /**

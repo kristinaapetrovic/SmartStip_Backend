@@ -18,10 +18,7 @@ class LocationController extends Controller
     public function index()
     {
         try{
-            if(Gate::allows('viewAny', Location::class))
                 return Location::all();
-            else
-                return response()->json(['message'=>'Forbidden'], 403);
         }catch(\Exception $e){
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
@@ -50,10 +47,7 @@ class LocationController extends Controller
     public function show(Location $location)
     {
         try{
-            if(Gate::allows('view', $location))
-                return new LocationResource($location);
-            else
-                return response()->json(['message'=>'Forbidden'], 403);
+            return new LocationResource($location);
         }catch(\Exception $e){
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }

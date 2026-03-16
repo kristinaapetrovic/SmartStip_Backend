@@ -33,9 +33,6 @@ class UpdateStudentRequest extends FormRequest
             ],
             'street_address' => ['required','string','max:255'],
             'phone_number' => ['required','string','max:20'],
-            'user_id' => [
-                'required','exists:users,id'
-            ],
             'location_id' => ['required','exists:locations,id'],
             'faculty_id' => ['required','exists:faculties,id'],
         ];

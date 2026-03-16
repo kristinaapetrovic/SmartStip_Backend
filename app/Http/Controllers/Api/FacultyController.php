@@ -21,8 +21,13 @@ class FacultyController extends Controller
     public function index()
     {
         try{
-            if(Gate::allows('viewAny', Faculty::class))
-                return FacultyResource::collection(Faculty::all());
+            if(Gate::allows('viewAny', Faculty::class)){
+                $facultiesQuery = $this->loadRelationships(Faculty::query());
+
+                $faculties = $facultiesQuery->get();
+
+                return FacultyResource::collection($faculties);
+            }
             else
                 return response()->json(['message'=>'Forbidden'], 403);
         }catch(\Exception $e){
@@ -56,7 +61,7 @@ class FacultyController extends Controller
     {
         try{
             if(Gate::allows('view', $faculty))
-                return new FacultyResource($faculty);
+                return new FacultyResource($this->loadRelationships($faculty));
             else
                 return response()->json(['message'=>'Forbidden'], 403);
         }catch(\Exception $e){

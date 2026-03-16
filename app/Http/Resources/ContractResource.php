@@ -21,7 +21,8 @@ class ContractResource extends JsonResource
             'signed'=>$this->signed,
             'terminated'=>$this->terminated,
             'details'=>$this->details,
-            'student'=>new StudentResource($this->whenLoaded('student'))
+            'student'=>new StudentResource($this->whenLoaded('student')),
+            'scholarship'=>new ScholarshipCallResource($this->whenLoaded('scholarship'))
         ];
     }
 }

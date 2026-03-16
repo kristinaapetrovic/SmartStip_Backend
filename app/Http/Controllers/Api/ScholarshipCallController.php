@@ -21,8 +21,11 @@ class ScholarshipCallController extends Controller
     public function index()
     {
         try{
-        if(Gate::allows('viewAny', ScholarshipCall::class))
-            return ScholarshipCallResource::collection(ScholarshipCall::all());
+        if(Gate::allows('viewAny', ScholarshipCall::class)){
+             $scholarshipCallsQuery = $this->loadRelationships(ScholarshipCall::query());
+            $scholarshipCalls = $scholarshipCallsQuery->get();
+            return ScholarshipCallResource::collection($scholarshipCalls);
+        }
         else
             return response()->json(['message'=>'Forbidden'], 403);
         }catch(\Exception $e){
@@ -56,7 +59,7 @@ class ScholarshipCallController extends Controller
     {
         try{
             if(Gate::allows('view', $scholarshipCall))
-                return new ScholarshipCallResource($scholarshipCall);
+                return new ScholarshipCallResource($this->loadRelationships($scholarshipCall));
             else
                 return response()->json(['message'=>'Forbidden'], 403);
         }catch(\Exception $e){

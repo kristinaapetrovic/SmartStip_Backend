@@ -37,6 +37,20 @@ class Student extends Model
 
     public function applications(): HasMany
     {
-        return $this->hasMany(Application::class);
+        return $this->hasMany(Application::class, 'student_id', 'id');
+    }
+    public function scopeWithIndex($query, $index)
+    {
+        return $query->where('index', $index);
+    }
+    public function scopeOfAdminFaculty($query, $user)
+    {
+        if ($user && $user->administrator) {
+            $facultyId = $user->administrator->faculty_id;
+
+            return $query->where('faculty_id', $facultyId);
+        }
+
+        return $query;
     }
 }

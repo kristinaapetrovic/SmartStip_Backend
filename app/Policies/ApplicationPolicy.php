@@ -13,7 +13,7 @@ class ApplicationPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->isAdministrator();
+        return $user->isAdministrator() || $user->isCommissioner();
     }
 
     /**
@@ -21,7 +21,7 @@ class ApplicationPolicy
      */
     public function view(User $user, Application $application): bool
     {
-        if($user->isAdministrator()) {
+        if($user->isAdministrator() || $user->isCommissioner()){
             return true;
         }   
         if ($user->isStudent()) {
@@ -43,7 +43,11 @@ class ApplicationPolicy
      */
     public function update(User $user, Application $application): bool
     {
-        return $user->isStudent() && $application->student_id === $user->student->id;
+        if($user->isStudent() && $application->student_id === $user->student->id)
+            return true;
+        if($user->isAdministrator() || $user->isCommissioner())
+            return true;
+        return false;
     }
 
     /**

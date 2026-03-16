@@ -23,4 +23,20 @@ class University extends Model
     {
         return $this->belongsTo(Location::class);
     }
+
+    public function scopeWithName($query, $name)
+    {
+        if ($name) {
+            return $query->where('name', 'like', "%$name%");
+        }
+        return $query;
+    }
+
+    public function scopeWithLocation($query, $locationId)
+    {
+        if ($locationId) {
+            return $query->where('location_id', $locationId);
+        }
+        return $query;
+    }
 }

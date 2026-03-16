@@ -18,6 +18,7 @@ class UniversityResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'location' => new LocationResource($this->whenLoaded('location')),
+            'faculties' => FacultyResource::collection($this->whenLoaded('faculties')),
         ];
     }
 }

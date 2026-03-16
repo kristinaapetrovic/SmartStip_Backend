@@ -16,6 +16,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $call = ScholarshipCall::factory()->create();
+
         University::factory()
             ->count(2)
             ->has(
@@ -27,15 +29,16 @@ class DatabaseSeeder extends Seeder
                     ->has(
                         Student::factory()
                             ->count(20)
-                            ->has(Contract::factory())
+                            ->has(
+                                Contract::factory()->state([
+                                    'scholarship_call_id' => $call->id
+                                ])
+                            )
                     )
             )
             ->create();
 
         Commissioner::factory()->count(5)->create();
-
-        // 3️⃣ Konkurs
-        $call = ScholarshipCall::factory()->create();
 
         Student::all()->each(function ($student) use ($call) {
             Application::factory()->create([

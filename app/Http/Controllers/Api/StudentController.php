@@ -17,16 +17,30 @@ class StudentController extends Controller
      * Display a listing of the resource.
      */
     use CanLoadRelationships;
-    private array $relations = ['user', 'faculty', 'location', 'contract', 'applications'];
+    private array $relations = ['user', 'faculty', 'location', 'contract', 'applications', 'faculty.university', 'applications.scholarship', 'applications.student'];
 
-    public function index()
+    public function index(Request $request)
     {
-        try{
-            if(Gate::allows('viewAny', Student::class))
-                return StudentResource::collection(Student::all());
-            else
+        try {
+            if (Gate::allows('viewAny', Student::class)) {
+
+                $index = $request->input('index');
+
+                $studentsQuery = Student::query()
+                    ->ofAdminFaculty($request->user())
+                    ->when($index, fn($query, $index) => $query->withIndex($index));
+
+                $studentsQuery = $this->loadRelationships($studentsQuery);
+
+                $students = $studentsQuery->latest()->get();
+
+                return StudentResource::collection($students);
+            }
+            else {
                 return response()->json(['message'=>'Forbidden'], 403);
-        }catch(\Exception $e){
+            }
+
+        } catch (\Exception $e) {
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
     }
@@ -54,7 +68,7 @@ class StudentController extends Controller
     public function show(Student $student)
     {
         if(Gate::allows('view', $student))
-            return new StudentResource($student);
+            return new StudentResource($this->loadRelationships($student));
         else
             return response()->json(['message'=>'Forbidden'], 403);
     }

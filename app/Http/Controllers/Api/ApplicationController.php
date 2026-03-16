@@ -19,13 +19,27 @@ class ApplicationController extends Controller
      */
     use CanLoadRelationships;
     private array $relations = ['student', 'student.user', 'scholarship'];
-    public function index()
+    public function index(Request $request)
     {
         try{
-        if(Gate::allows('viewAny', Application::class))
-            return ApplicationResource::collection(Application::all());
-        else
-            return response()->json(['message' => 'Forbidden'], 403);
+            if(Gate::allows('viewAny', Application::class)){
+
+                $status = $request->input('status');
+                $user = $request->user();
+
+                $applicationsQuery = Application::query()
+                    ->forAdminFaculty($user)
+                    ->when($status, fn($query, $status) => $query->withStatus($status));
+
+                $applicationsQuery = $this->loadRelationships($applicationsQuery);
+
+                $applications = $applicationsQuery->latest()->get();
+
+                return ApplicationResource::collection($applications);
+            }
+            else
+                return response()->json(['message' => 'Forbidden'], 403);
+
         }catch(\Exception $e){
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }
@@ -38,6 +52,17 @@ class ApplicationController extends Controller
     {
         try{
             $data = $request->validated();
+            $existingApplication = Application::where('student_id', $data['student_id'])
+            ->where('scholarship_call_id', $data['scholarship_call_id'])
+            ->first();
+
+            if ($existingApplication) {
+                return response()->json([
+                    'message' => 'You have already applied for this scholarship.'
+                ], 409);
+            }
+
+            $data['status'] = 'pending';
 
             $application = Application::create($data);
 
@@ -57,7 +82,7 @@ class ApplicationController extends Controller
     {
         try{
             if(Gate::allows('view', $application))
-                return new ApplicationResource($application);
+                return new ApplicationResource($this->loadRelationships($application));
             else
                 return response()->json(['message' => 'Forbidden'], 403);
         }catch(\Exception $e){

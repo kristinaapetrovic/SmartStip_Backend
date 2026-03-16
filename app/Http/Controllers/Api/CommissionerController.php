@@ -23,7 +23,12 @@ class CommissionerController extends Controller
     {
         try{
             if(Gate::allows('viewAny', Commissioner::class)){
-                return CommissionerResource::collection(Commissioner::all());
+                 $commissionersQuery = $this->loadRelationships(Commissioner::query());
+
+                $commissioners = $commissionersQuery->get();
+
+                return CommissionerResource::collection($commissioners);
+
             }
             return response()->json(['message' => 'Forbidden'], 403);
         }catch(\Exception $e){
@@ -57,7 +62,7 @@ class CommissionerController extends Controller
     {
         try{
             if(Gate::allows('view', $commissioner))
-                return new CommissionerResource($commissioner);
+                return new CommissionerResource($this->loadRelationships($commissioner));
             else
                 return response()->json(['message' => 'Forbidden'], 403);
         }catch(\Exception $e){

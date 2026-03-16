@@ -16,6 +16,9 @@ class StudentPolicy
         if($user->isCommissioner()){
             return true;
         }
+        if($user->isAdministrator()){
+            return true;
+        }
         return false;
     }
 

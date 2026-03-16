@@ -62,7 +62,7 @@ class ContractPolicy
      */
     public function update(User $user, Contract $contract): bool
     {
-        return false;
+        return $user->isCommissioner();
     }
 
     /**

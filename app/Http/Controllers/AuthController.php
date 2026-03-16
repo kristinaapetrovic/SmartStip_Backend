@@ -30,12 +30,25 @@ class AuthController extends Controller
             ]);
         }
         $token = $user->createToken('api-token')->plainTextToken;
+        $role = null;
+
+        if ($user->isAdministrator()) {
+            $role = 'administrator';
+            $role_id = $user->administrator->id;
+        } elseif ($user->isStudent()) {
+            $role = 'student';
+            $role_id = $user->student->id;
+        } elseif ($user->isCommissioner()) {
+            $role = 'commissioner';
+            $role_id = $user->commissioner->id;
+        }
         return response()->json([
             'id' => $user->id,
             'token' => $token,
             'name' => $user->name,
-            'role' => $user->role,
+            'role' => $role,
             'email' => $user->email,
+            'role_id' => $role_id
         ]);
     }
 

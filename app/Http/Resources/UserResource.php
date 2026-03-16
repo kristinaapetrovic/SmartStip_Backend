@@ -14,10 +14,20 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $role = null;
+
+        if ($this->resource->isAdministrator()) {
+            $role = 'administrator';
+        } elseif ($this->resource->isStudent()) {
+            $role = 'student';
+        } elseif ($this->resource->isCommissioner()) {
+            $role = 'commissioner';
+        }
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email
+            'email' => $this->email,
+            'role' => $role,
         ];
     }
 }
