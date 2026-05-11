@@ -13,8 +13,14 @@ class ApplicationFactory extends Factory
 
     public function definition(): array
     {
+        $status = $this->faker->randomElement(Application::$statuses);
+
         return [
-            'status' => $this->faker->randomElement(Application::$statuses),
+            'status' => $status,
+
+            'reason_for_rejection' => $status === 'rejected'
+                ? $this->faker->sentence()
+                : null,
 
             'average_grade_url' => $this->faker->url(),
             'espb_url' => $this->faker->url(),
@@ -22,7 +28,6 @@ class ApplicationFactory extends Factory
             'proof_of_unenrollment_url' => $this->faker->url(),
 
             'student_id' => Student::factory(),
-
             'scholarship_call_id' => ScholarshipCall::factory(),
         ];
     }

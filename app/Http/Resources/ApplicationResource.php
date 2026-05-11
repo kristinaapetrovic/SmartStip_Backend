@@ -22,7 +22,8 @@ class ApplicationResource extends JsonResource
             'identification_card_url'=>$this->identification_card_url,
             'proof_of_unenrollment_url'=>$this->proof_of_unenrollment_url,
             'student'=>new StudentResource($this->whenLoaded('student')),
-            'scholarship'=>new ScholarshipCallResource($this->whenLoaded('scholarship'))
+            'scholarship'=>new ScholarshipCallResource($this->whenLoaded('scholarship')),
+            'reason_for_rejection'=>$this->reason_for_rejection,
         ];
     }
 }

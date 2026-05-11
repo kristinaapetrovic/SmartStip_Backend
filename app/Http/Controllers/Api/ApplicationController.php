@@ -11,6 +11,7 @@ use App\Models\Application;
 use Gate;
 use App\Trait\CanLoadRelationships;
 use Illuminate\Http\Request;
+use App\Models\Student;
 
 class ApplicationController extends Controller
 {
@@ -64,6 +65,16 @@ class ApplicationController extends Controller
 
             $data['status'] = 'pending';
 
+            $student = Student::where('user_id', $data['user_id'])->first();
+
+            if (!$student) {
+                return response()->json([
+                    'message' => 'Student not found for given user.'
+                ], 404);
+            }
+
+            $data['student_id'] = $student->id;
+
             $application = Application::create($data);
 
             return response()->json([
@@ -97,9 +108,24 @@ class ApplicationController extends Controller
     {
         try{
             $data = $request->validated();
-
+            $originalStatus = $application->status;    
             $application->update($data);
-
+            if (isset($data['status']) && $data['status'] !== $originalStatus) {
+                $studentUser = $application->student->user; 
+                if ($studentUser) {
+                    $studentUser->notify(new \App\Notifications\ApplicationStatusChanged(
+                        $application,
+                        $application->scholarship,
+                        previousStatus: $originalStatus,
+                        newStatus: $application->status,
+                        reason: $data['reason_for_rejection'] ?? null
+                    ));
+                }
+                return response()->json([
+                    'message' => 'Prijava uspešno ažurirana. Notifikacija poslata studentu.',
+                    'model' => new ApplicationResource($application)
+                ]);
+            }
             return response()->json([
                 'message' => 'Prijava uspešno ažurirana',
                 'model' => new ApplicationResource($application)

@@ -28,6 +28,12 @@ class UpdateApplicationRequest extends FormRequest
                 'sometimes',
                 'in:' . implode(',', \App\Models\Application::$statuses),
             ],
+            'reason_for_rejection' => [
+                'nullable',
+                'string',
+                'max:1000',
+                'required_if:status,rejected',
+            ],
             'average_grade_url' => [
                 'sometimes',
                 'string',
@@ -69,6 +75,8 @@ class UpdateApplicationRequest extends FormRequest
             'proof_of_unenrollment_url.max' => 'Proof of unenrollment URL is too long.',
             'scholarship_call_id.exists' => 'Selected scholarship call does not exist.',
             'student_id.exists' => 'Selected student does not exist.',
+            'reason_for_rejection.required_if' => 'Reason for rejection is required when application is rejected.',
+            'reason_for_rejection.max' => 'Reason for rejection is too long.',
         ];
     }
 }

@@ -23,23 +23,17 @@ class StudentController extends Controller
     {
         try {
             if (Gate::allows('viewAny', Student::class)) {
-
                 $index = $request->input('index');
-
                 $studentsQuery = Student::query()
                     ->ofAdminFaculty($request->user())
                     ->when($index, fn($query, $index) => $query->withIndex($index));
-
                 $studentsQuery = $this->loadRelationships($studentsQuery);
-
                 $students = $studentsQuery->latest()->get();
-
                 return StudentResource::collection($students);
             }
             else {
                 return response()->json(['message'=>'Forbidden'], 403);
             }
-
         } catch (\Exception $e) {
             return response()->json(['message' => 'Error: ' . $e->getMessage()], 500);
         }

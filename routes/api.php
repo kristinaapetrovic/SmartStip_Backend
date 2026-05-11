@@ -6,11 +6,13 @@ use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ScholarshipCallController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\UniversityController;
+use App\Http\Controllers\PyServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CountController;
 use App\Http\Controllers\Api\AdministratorController;
+use App\Http\Controllers\NotificationController;
 
 Route::get('/studentsCount', [CountController::class, 'studentsCount']);
 Route::get('/scholarshipCallCount', [CountController::class, 'scholarshipCallCount']);
@@ -30,6 +32,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('universities', UniversityController::class)->except(['index', 'show']);
     Route::apiResource('faculties', FacultyController::class)->except(['index', 'show']);
     Route::apiResource('locations', LocationController::class)->except(['index', 'show']);
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::get('/notifications/{id}', [NotificationController::class, 'show']);
+
+    Route::post('/apply', [PyServiceController::class, 'apply']);
 });
 
 Route::post('/login', [AuthController::class, 'login']);

@@ -48,6 +48,10 @@ class StoreContractRequest extends FormRequest
                 'exists:students,id',
                 'unique:contracts,student_id', 
             ],
+            'scholarship_call_id' => [
+                'required',
+                'exists:scholarship_calls,id',
+            ],
         ];
     }
 
@@ -71,6 +75,9 @@ class StoreContractRequest extends FormRequest
             'student_id.required' => 'Student is required.',
             'student_id.exists' => 'Selected student does not exist.',
             'student_id.unique' => 'This student already has a contract.',
+
+            'scholarship_call_id.required' => 'Scholarship call is required.',
+            'scholarship_call_id.exists' => 'Selected scholarship call does not exist.',
         ];
     }
 }

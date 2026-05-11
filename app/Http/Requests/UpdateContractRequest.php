@@ -48,6 +48,10 @@ class UpdateContractRequest extends FormRequest
             'student_id' => [
                 'sometimes',
                 'exists:students,id'
+            ], 
+            'scholarship_call_id' => [
+                'sometimes',
+                'exists:scholarship_calls,id',
             ],
         ];
     }
@@ -62,6 +66,7 @@ class UpdateContractRequest extends FormRequest
             'details.string' => 'Details must be text.',
             'student_id.exists' => 'Selected student does not exist.',
             'student_id.unique' => 'This student already has a contract.',
+            'scholarship_call_id.exists' => 'Selected scholarship call does not exist.',
         ];
     }
 }

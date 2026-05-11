@@ -20,6 +20,13 @@ class ScholarshipCallFactory extends Factory
     public function definition(): array
     {
         $applicationDeadline = $this->faker->dateTimeBetween('now', '+3 months');
+        $complaintDeadline = null;
+        if ($this->faker->boolean(70)) { 
+            $complaintDeadline = $this->faker->dateTimeBetween(
+                $applicationDeadline,
+                (clone $applicationDeadline)->modify('+1 month')
+            );
+        }
 
         return [
             'title' => 'Scholarship for ' . $this->faker->randomElement([
@@ -29,17 +36,10 @@ class ScholarshipCallFactory extends Factory
                 'PhD Candidates',
                 'Outstanding Students'
             ]),
-
             'description' => $this->faker->paragraphs(3, true),
-
             'status' => $this->faker->randomElement(ScholarshipCall::$statuses),
-
             'application_deadline' => $applicationDeadline,
-
-            'complaint_deadline' => $this->faker->optional()->dateTimeBetween(
-                $applicationDeadline,
-                '+1 month'
-            ),
+            'complaint_deadline' => $complaintDeadline,
         ];
     }
 }
